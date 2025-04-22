@@ -1,0 +1,24 @@
+---
+# 防止角色名称冲突
+role_name_check: 1
+# 依赖管理
+dependency:
+  name: galaxy
+  options:
+    ignore-errors: true
+# 定义测试容器驱动
+driver:
+  name: docker
+# 定义测试容器
+platforms:
+  - name: instance
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-debian11}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+# 定义测试用例
+provisioner:
+  name: ansible
