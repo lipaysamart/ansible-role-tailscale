@@ -23,7 +23,7 @@
   ansible.builtin.shell: tailscale up --auth-key {{ tailscale_auth_key }}
   register: tailscale_up_result
   when:
-    - tailscale_auth_key is defined
+    - tailscale_auth_key != ""
 
 - name: Print tailscale up result when failed.
   ansible.builtin.debug:
