@@ -22,3 +22,5 @@ platforms:
 # 定义测试用例
 provisioner:
   name: ansible
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
