@@ -1,14 +1,32 @@
 ---
 name: Publish on Ansible Galaxy
 
-"on":
-  workflow_run:
-    workflows: ["First Workflow"]  # 必须匹配第一个 workflow 的 name
-    types:
-      - completed
+on:
+  push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install test dependencies.
+        run: pip3 install yamllint
+
+      - name: Lint code.
+        run: |
+          yamllint .
+
   publish:
     name: Publish on Ansible Galaxy
     runs-on: ubuntu-latest
