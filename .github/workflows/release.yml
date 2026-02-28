@@ -3,7 +3,7 @@ name: Publish on Ansible Galaxy
 
 on:
   push:
-    tags: ["^v.*"]
+    tags: ["*"]
 
 defaults:
   run:
