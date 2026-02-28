@@ -19,8 +19,9 @@
   when:
     - shell_script_result is failed
 
-- name: Tailscale set atuh-key.
-  ansible.builtin.shell: tailscale up --auth-key {{ tailscale_auth_key }}
+- name: Tailscale set auth-key.
+  ansible.builtin.shell: |
+    tailscale up --auth-key {{ tailscale_auth_key }} {{ tailscale_up_options }}
   register: tailscale_up_result
   when:
     - tailscale_auth_key != ""
