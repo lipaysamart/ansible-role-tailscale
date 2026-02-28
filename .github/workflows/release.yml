@@ -2,8 +2,10 @@
 name: Publish on Ansible Galaxy
 
 on:
-  workflow_dispatch:
   push:
+    branches: [main]
+  pull_request:
+    branches: [main]
     tags:
       - "v*"
 
@@ -11,10 +13,11 @@ jobs:
   publish:
     name: Publish on Ansible Galaxy
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          path: "lipaysamart.tailscale"
 
       - name: Release Ansible Role to Galaxy
         uses: hspaans/ansible-galaxy-action@v2.1.0
