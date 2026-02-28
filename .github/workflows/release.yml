@@ -30,7 +30,7 @@ jobs:
   publish:
     name: Publish on Ansible Galaxy
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: lint
 
     steps:
       - name: Checkout Code
