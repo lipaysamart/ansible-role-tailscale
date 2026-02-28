@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: lipaysamart
   description: 用于在 Linux/Unix 系统上自动化安装、配置和管理 Tailscale
