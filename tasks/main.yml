@@ -34,7 +34,7 @@
   ansible.builtin.shell: |
     tailscale up --auth-key {{ tailscale_auth_key }} {{ tailscale_up_options }}
   register: tailscale_up_result
-  when: 
+  when:
     - tailscale_auth_key is defined
     - tailscale_auth_key != ""
 
@@ -43,3 +43,17 @@
     msg: "Tailscale up command failed with return code: {{ tailscale_up_result.rc }}, stderr: {{ tailscale_up_result.stderr }}"
   when:
     - tailscale_up_result is failed
+
+- name: Check if tailscaled service is active
+  ansible.builtin.systemd:
+    name: tailscaled
+    state: started
+    enabled: yes
+  register: tailscale_service_status
+
+- name: Assert that tailscaled service is running
+  ansible.builtin.assert:
+    that:
+      - ( tailscale_service_status.status.ExecMainCode | int ) == 0
+    fail_msg: "Tailscale service (tailscaled) is not running ExitCode: {{ tailscale_service_status.status.ExecMainCode }}"
+    success_msg: "Tailscale service (tailscaled) is running successfully"
