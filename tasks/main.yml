@@ -6,7 +6,7 @@
         name: curl
         state: present
         update_cache: true
-        cache_valid_time:  3600
+        cache_valid_time: 3600
 
     - name: Create keyrings directory
       ansible.builtin.file:
