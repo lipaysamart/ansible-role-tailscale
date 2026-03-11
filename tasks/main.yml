@@ -1,13 +1,6 @@
 ---
 - name: Install and configure Tailscale for Debian-based systems
   block:
-    - name: Install curl dependency
-      ansible.builtin.apt:
-        name: curl
-        state: present
-        update_cache: true
-        cache_valid_time: 3600
-
     - name: Create keyrings directory
       ansible.builtin.file:
         path: /usr/share/keyrings/

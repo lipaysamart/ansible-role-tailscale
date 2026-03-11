@@ -6,7 +6,7 @@ N/A
 
 ```sh
 tailscale_auth_key: ""
-tailscale_up_options: ""
+tailscale_up_options: "--accept-routes"
 ```
 
 ## Dependencies
@@ -19,8 +19,6 @@ None
 - hosts: localhost
   roles:
     - lipaysamart.tailscale
-  vars:
-    tailscale_up_options: "--accept-routes"
 ```
 
 ## License
