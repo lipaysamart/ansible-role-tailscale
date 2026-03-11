@@ -1,0 +1,10 @@
+---
+rules:
+  # 忽略行长度限制
+  line-length:
+    max: 200  # 改为200字符，超过80个字符
+    level: warning
+  indentation:
+    spaces: 2
+    indent-sequences: true
+extends: default

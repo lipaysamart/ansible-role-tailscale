@@ -1,33 +1,57 @@
 ---
-- name: Install dependencies.
-  ansible.builtin.apt:
-    name: curl
-    state: present
-    update_cache: true
+- name: Install and configure Tailscale for Debian-based systems
+  block:
+    - name: Create keyrings directory
+      ansible.builtin.file:
+        path: /usr/share/keyrings/
+        state: directory
+        mode: 0755
 
-- name: Execute shell script install.
-  ansible.builtin.shell: |
-    curl -fsSL https://tailscale.com/install.sh | sh
-  ignore_errors: true
-  register: shell_script_result
-  when:
-    - tailscale_platform == "linux"
+    - name: Download Tailscale GPG key
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/{{ ansible_facts.distribution | lower }}/{{ ansible_facts.distribution_release }}.noarmor.gpg
+        dest: /usr/share/keyrings/tailscale-archive-keyring.gpg
 
-- name: Print shell script result when failed.
-  ansible.builtin.debug:
-    msg: "{{ shell_script_result }}"
-  when:
-    - shell_script_result is failed
+    - name: Add Tailscale repository
+      ansible.builtin.get_url:
+        url: https://pkgs.tailscale.com/stable/{{ ansible_facts.distribution | lower }}/{{ ansible_facts.distribution_release }}.tailscale-keyring.list
+        dest: /etc/apt/sources.list.d/tailscale.list
 
-- name: Tailscale set auth-key.
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install Tailscale package
+      ansible.builtin.apt:
+        name: tailscale
+        state: present
+  when: ansible_facts.os_family == "Debian"
+
+- name: Tailscale set auth-key
   ansible.builtin.shell: |
     tailscale up --auth-key {{ tailscale_auth_key }} {{ tailscale_up_options }}
   register: tailscale_up_result
   when:
+    - tailscale_auth_key is defined
     - tailscale_auth_key != ""
 
-- name: Print tailscale up result when failed.
-  ansible.builtin.debug:
-    msg: "{{ tailscale_up_result }}"
+- name: Print tailscale up result when failed
+  ansible.builtin.fail:
+    msg: "Tailscale up command failed with return code: {{ tailscale_up_result.rc }}, stderr: {{ tailscale_up_result.stderr }}"
   when:
     - tailscale_up_result is failed
+
+- name: Check if tailscaled service is active
+  ansible.builtin.systemd:
+    name: tailscaled
+    state: started
+    enabled: yes
+  register: tailscale_service_status
+
+- name: Assert that tailscaled service is running
+  ansible.builtin.assert:
+    that:
+      - ( tailscale_service_status.status.ExecMainCode | int ) == 0
+    fail_msg: "Tailscale service (tailscaled) is not running ExitCode: {{ tailscale_service_status.status.ExecMainCode }}"
+    success_msg: "Tailscale service (tailscaled) is running successfully"

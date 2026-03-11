@@ -1,32 +1,26 @@
-Requirements
-------------
+## Requirements
 
 N/A
 
-
-Role Variables
---------------
+## Role Variables
 
 ```sh
-tailscale_platform: "linux"
 tailscale_auth_key: ""
+tailscale_up_options: "--accept-routes"
 ```
 
-Dependencies
-------------
+## Dependencies
 
 None
 
-Example Playbook
-----------------
+## Example Playbook
 
 ```yml
 - hosts: localhost
   roles:
-  - lipaysamart.tailscale
+    - lipaysamart.tailscale
 ```
 
-License
--------
+## License
 
 MIT
